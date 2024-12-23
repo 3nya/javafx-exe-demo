@@ -1,0 +1,119 @@
+<!-- This is the main configuration file for Maven. It is used to build the project and manage dependencies. -->
+
+
+<!-- Bash commands -->
+<!-- mvn clean package -->
+<!-- mvn clean javafx:run -->
+<!-- (run code with maven, just add another dash (-) in front of)-->
+<!-- java -module-path "target/libs" add-modules javafx.controls,javafx.fxml -jar target/demo-1.0-SNAPSHOT.jar -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>13</version>
+        </dependency>
+    </dependencies>
+    <!-- Plugin -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <release>11</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <executions>
+                    <execution>
+                        <!-- Default configuration for running -->
+                        <!-- Usage: mvn clean javafx:run -->
+                        <id>default-cli</id>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.example.App</mainClass>
+                    <!-- additional stuff to turn it into an exe (?)-->
+                    <jlinkImageName>demo</jlinkImageName>
+                    <launcher>launcher</launcher>
+                    <jlinkZipName>demo-zip</jlinkZipName>
+                    <noManPages>true</noManPages>
+                    <stripDebug>true</stripDebug>
+                    <noHeaderFiles>true</noHeaderFiles>
+                </configuration>
+            </plugin>
+            <!-- Maven dependency plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal> <!-- tells maven to copy these dependencies into the specified output directory-->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>libs/</classpathPrefix>
+                            <mainClass>com.example.App</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- JPackage plugin -->
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <name>DemoApp</name>
+                    <appVersion>1.0.0</appVersion>
+                    <arguments>--opt</arguments> <!-- might be how to get rid of cmd opening but idk -->
+                    <vendor>Test </vendor>
+                    <destination>target/dist</destination>
+                    <module>com.example/com.example.App</module>
+                    <runtimeImage>target/demo</runtimeImage>
+                    <winDirChooser>true</winDirChooser>
+                    <winMenu>true</winMenu>
+                    <winMenuGroup>Demo Application</winMenuGroup>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
